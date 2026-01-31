@@ -1,0 +1,51 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for proper merging
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git remote add upstream https://github.com/refact0r/system24.git || true
+
+      - name: Fetch upstream changes
+        run: git fetch upstream
+
+      - name: Save custom flavor file
+        run: cp theme/flavors/system24-sunset.theme.css /tmp/system24-sunset.theme.css
+
+      - name: Merge upstream into main
+        run: |
+          git checkout main
+          git merge upstream/main --no-edit || {
+            echo "Merge failed, attempting to resolve conflicts automatically if possible."
+            git merge --abort
+            exit 1 # Exit if merge still fails or requires manual intervention
+          }
+
+      - name: Restore custom flavor file
+        run: cp /tmp/system24-sunset.theme.css theme/flavors/system24-sunset.theme.css
+
+      - name: Commit changes (if any)
+        run: |
+          git add theme/flavors/system24-sunset.theme.css # Ensure flavor file changes are staged
+          git diff --quiet --exit-code HEAD || git commit -m "Merge upstream changes and restore custom flavor"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
