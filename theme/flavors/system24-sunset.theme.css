@@ -153,9 +153,9 @@ body {
     --yellow-4: oklch(65% 0.12 90);
     --yellow-5: oklch(60% 0.12 90);
     
-    --orange-1: oklch(80% 0.12 80);
-    --orange-2: oklch(76.22% 0.117 80.95);
-    --orange-3: oklch(70% 0.11 80);
-    --orange-4: oklch(65% 0.10 80);
-    --orange-5: oklch(60% 0.09 80);
+    --orange-1: oklch(83.060% 0.175 75.871);
+    --orange-2: oklch(81.060% 0.170 75.871);
+    --orange-3: oklch(78.060% 0.165 75.871);
+    --orange-4: oklch(75.060% 0.160 75.871);
+    --orange-5: oklch(72.060% 0.155 75.871);
 }
