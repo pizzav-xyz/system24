@@ -5,6 +5,10 @@ on:
     - cron: '0 0 * * *' # Run daily at midnight UTC
   workflow_dispatch: # Allows manual triggering
 
+permissions:
+  contents: write
+  workflows: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -33,7 +37,7 @@ jobs:
           git merge upstream/main --no-edit || {
             echo "Merge failed, attempting to resolve conflicts automatically if possible."
             git merge --abort
-            exit 1 # Exit if merge still fails or requires manual intervention
+            exit 1
           }
 
       - name: Restore custom flavor file
@@ -41,7 +45,7 @@ jobs:
 
       - name: Commit changes (if any)
         run: |
-          git add theme/flavors/system24-sunset.theme.css # Ensure flavor file changes are staged
+          git add theme/flavors/system24-sunset.theme.css
           git diff --quiet --exit-code HEAD || git commit -m "Merge upstream changes and restore custom flavor"
 
       - name: Push changes
